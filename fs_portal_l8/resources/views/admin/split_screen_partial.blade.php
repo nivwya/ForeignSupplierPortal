@@ -19,8 +19,6 @@
   z-index: 1000;
 }
 </style>
-
-
 <div class="split-screen-container" style="display: flex; gap: 10px; height: 750px; position: relative; overflow: visible;">
     <button type="button" class="close-split-screen-btn"
       style="position: absolute; top: 1px; right: 1px; background: #e74c3c; color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; z-index: 1000;"
@@ -36,7 +34,6 @@
           <th>Quantity</th>
         </tr>
       </thead>
-      <!--changes made by niveditha-->
       <tbody>
         @foreach($po->items as $item)
         <tr>
@@ -46,7 +43,6 @@
         </tr>
         @endforeach
       </tbody>
-      <!--changes end-->
     </table>
   </div>
   <!-- RIGHT: PDF Preview + Upload -->
