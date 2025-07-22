@@ -160,9 +160,7 @@
     margin-bottom: 3rem;
 }
 
-
 </style>
-
 <div id="admin-orders-section">
     <div class="side-by-side-container">
         <div class="po-upload-section">
@@ -172,8 +170,7 @@
                 <input type="file" id="po_file" name="po_file" accept="application/pdf" required>
                 <button type="submit">Upload & Preview</button>
             </form>
-        </div>
-
+        </div
         <form id="orders-search-form" method="GET" action="{{ route('orders.table') }}">
             <input type="text" name="order_number" placeholder="PO Number" value="{{ request('order_number') }}">
             <input type="text" name="company" placeholder="Company" value="{{ request('company') }}">
