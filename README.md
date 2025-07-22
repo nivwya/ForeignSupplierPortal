@@ -2,7 +2,7 @@
 
 https://github.com//assets/
 
-A comprehensive web application developed during my **Summer Internship** to streamline communication between foreign suppliers and the procurement team. The portal allows vendors to manage **purchase orders, delivery schedules, invoices, payments, and profiles** — all in one place.
+Developed during my **Summer Internship** to streamline communication between foreign suppliers and the procurement team. The portal allows vendors to manage **purchase orders, delivery schedules, invoices, payments, and profiles** — all in one place.
 The system is integrated with **SAP** for real-time enterprise data syncing and features secure authentication, dynamic reporting, and profile management for vendors.
 
 ---
