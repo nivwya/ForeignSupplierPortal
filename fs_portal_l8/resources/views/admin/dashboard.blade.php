@@ -8,7 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <style>
-    /*changes made by niveditha*/
     * {
       margin: 0; padding: 0; box-sizing: border-box;
     }
@@ -334,7 +333,6 @@
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('collapsed');
 }
-
 function loadTabContent(tab) {
     const tabContent = document.getElementById('tab-content');
     let file = '';
@@ -369,8 +367,6 @@ function loadTabContent(tab) {
             }
         });
 }
-//changes end
-
 document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', function(e) {
         e.preventDefault();
@@ -379,10 +375,7 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
         loadTabContent(this.getAttribute('data-tab'));
     });
 });
-
-// Load admin home tab by default on page load
 loadTabContent('admin-home');
-
 function toggleReleaseAllBtn() {
     const table = document.getElementById('orders-table');
     const releaseAllBtn = document.getElementById('release-all-btn');
@@ -396,7 +389,6 @@ function toggleReleaseAllBtn() {
     });
     releaseAllBtn.style.display = show ? 'inline-block' : 'none';
 }
-
 document.getElementById('tab-content').addEventListener('click', function(e) {
         // Expand/collapse PO line items
         const poLink = e.target.closest('.po-link');
@@ -427,7 +419,6 @@ document.getElementById('tab-content').addEventListener('click', function(e) {
 
 function attachOrdersTabHandlers() 
 {
-    // --- Search/filter Orders (AJAX) ---
     const searchForm = document.getElementById('orders-search-form');
     if (searchForm) {
         searchForm.addEventListener('submit', function(e) {
@@ -447,8 +438,6 @@ function attachOrdersTabHandlers()
             });
         });
     }
-
-    // --- PO Upload & Verification (filename magic, static) ---
      const poFileInput = document.getElementById('po_file');
     if (poFileInput) {
         poFileInput.addEventListener('change', function(e) {
@@ -611,19 +600,15 @@ function attachOrdersTabHandlers()
 
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('close-split-screen-btn')) {
-        // Remove the split-screen row
         const splitRow = e.target.closest('.split-screen-row');
         if (splitRow) splitRow.remove();
     }
-    // Per-row Attach PDF
     if (e.target.classList.contains('attach-pdf-row-btn')) {
         // Remove any existing split-screen
         document.querySelectorAll('.split-screen-row').forEach(el => el.remove());
 
         const row = e.target.closest('tr');
         const poid = e.target.dataset.poid;
-
-        // Fetch the PO items and PDF info (make sure you have such an endpoint)
         fetch(`/admin/orders/${poid}/split-view`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(res => res.text())
         .then(html => {
@@ -634,8 +619,6 @@ document.addEventListener('click', function(e) {
             row.parentNode.insertBefore(newRow, row.nextSibling);
         });
     }
-
-    // Per-row Remove PDF
     if (e.target.classList.contains('remove-pdf-row-btn')) {
         const poid = e.target.dataset.poid;
         if (!confirm('Remove the attached PDF for this PO?')) return;
@@ -712,8 +695,6 @@ document.addEventListener('click', function(e) {
                 loadTabContent('orders');
             });
         }
-
-    // Call this after every table update
     toggleReleaseAllBtn();
 });
 document.addEventListener('submit', function(e) {
@@ -732,7 +713,6 @@ document.addEventListener('submit', function(e) {
         const formData = new FormData();
         formData.append('po_file', file);
         formData.append('po_id', poid);
-
         fetch('/admin/orders/attach-po-row', {
             method: 'POST',
             headers: {
@@ -751,12 +731,6 @@ document.addEventListener('submit', function(e) {
     }
     toggleReleaseAllBtn();
 });
-
-/**
- * Attaches handlers for the Admin Home tab (PO upload, preview, and proceed).
- * This must be called after the tab content is loaded into #tab-content.
- */
-
  function loadStatCards() {
     // Not Released
     fetch('/admin/purchase-orders/all-not-released')
@@ -816,7 +790,6 @@ function attachAdminHomeTabHandlers() {
             });
         });
     }
-
     const removeForm = document.getElementById('remove-admin-form');
     if (removeForm) {
         removeForm.addEventListener('submit', function(e) {
@@ -842,8 +815,6 @@ function attachAdminHomeTabHandlers() {
     }
 
 }
-
-//CHANGES
 function attachReportsTabsHandler() {
     const tabs = document.querySelectorAll(".report-tab");
     const sections = document.querySelectorAll(".report-section");
@@ -868,13 +839,10 @@ function attachReportsTabsHandler() {
             }
         });
     });
-
-    // Auto-click first tab (optional)
     if (tabs.length > 0) {
         tabs[0].click();
     }
 }
-
 function attachPoAckFilterHandler() {
     const filterButton = document.querySelector('#report-po-ack #filterButton');
     if (!filterButton) return;
@@ -882,12 +850,10 @@ function attachPoAckFilterHandler() {
     filterButton.addEventListener('click', () => {
         const poNumber = document.querySelector('#report-po-ack #ack_po_number')?.value || '';
         const status = document.querySelector('#report-po-ack #ack_status')?.value || '';
-
         const params = new URLSearchParams({
             ack_po_number: poNumber,
             ack_status: status,
         });
-
         fetch(`/reports-content?${params.toString()}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
@@ -904,20 +870,16 @@ function attachPoAckFilterHandler() {
         });
     });
 }
-
 function attachDeliveryFilterHandler() {
   const filterButton = document.querySelector('#report-delivery #filterDeliveryBtn');
   if (!filterButton) return;
-
   filterButton.addEventListener('click', () => {
     const status = document.querySelector('#report-delivery #delivery_status')?.value || '';
     const poNumber = document.querySelector('#report-delivery #delivery_po_number')?.value || '';
-
     const params = new URLSearchParams({
       delivery_status: status,
       po_number: poNumber,
     });
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -938,16 +900,13 @@ function attachDeliveryFilterHandler() {
 function attachGrnFilterHandler() {
   const filterButton = document.querySelector('#report-grn #filterGrnBtn');
   if (!filterButton) return;
-
   filterButton.addEventListener('click', () => {
     const poNumber = document.querySelector('#report-grn #grn_po_number')?.value || '';
     const materialCode = document.querySelector('#report-grn #grn_line_no')?.value || '';
-
     const params = new URLSearchParams({
       grn_po_number: poNumber,
       grn_line_no: materialCode,
     });
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -964,19 +923,15 @@ function attachGrnFilterHandler() {
     });
   });
 }
-
 function attachInvoiceFilterHandler() {
   const filterBtn = document.querySelector('#report-invoice #filterInvoiceBtn');
   if (!filterBtn) return;
-
   filterBtn.addEventListener('click', () => {
     const status = document.querySelector('#report-invoice #invoice_status')?.value || '';
     const poNumber = document.querySelector('#report-invoice #invoice_po_number')?.value || '';
-
     const params = new URLSearchParams();
     if (status) params.append('invoice_status', status);
     if (poNumber) params.append('invoice_po_number', poNumber);
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -997,11 +952,9 @@ function attachInvoiceFilterHandler() {
 function attachBacklogFilterHandler() {
   const filterBtn = document.querySelector('#filterButtonBacklog');
   if (!filterBtn) return;
-
   filterBtn.addEventListener('click', () => {
     const poNumber = document.querySelector('#backlog_po_number')?.value || '';
     const lineItem = document.querySelector('#backlog_line_item')?.value || '';
-
     const params = new URLSearchParams({
       backlog_po_number: poNumber,
       backlog_line_item: lineItem
@@ -1023,7 +976,6 @@ function attachBacklogFilterHandler() {
     });
   });
 }
-
 function attachReturnsFilterHandler() {
     const filterButton = document.querySelector('#filterButtonReturns');
     if (!filterButton) return;
@@ -1053,6 +1005,5 @@ function attachReturnsFilterHandler() {
     });
 }
 </script>
-
 </body>
 </html>
