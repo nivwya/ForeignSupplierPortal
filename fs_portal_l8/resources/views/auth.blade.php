@@ -187,7 +187,6 @@
             .logo-text .ar { font-size: 1rem; }
             .logo-text .en { font-size: 0.95rem; }
         }
-         /*changes made by niveditha*/
     .swal2-popup {
       background-color: #fff !important;
       border-radius: 16px !important;
@@ -243,7 +242,6 @@
       color: #e53935 !important;
       font-size: 0.95rem !important;
     }
-    /*changes end*/
     </style>
 </head>
 <body>
@@ -268,7 +266,6 @@
                     @endforeach
                 </div>
             @endif
-<!-- CHANGES MADE BY NIVEDITHA-->
             <form class="form-container" method="POST" action="{{ route('auth.handle') }}">
                 @csrf
                 <input type="hidden" name="mode" id="mode" value="{{ old('mode', $mode ?? 'login') }}">
@@ -338,7 +335,6 @@
     </div>
 </div>
 
-<!-- CHANGES MADE BY NIVEDITHA-->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
 function handleForgotPassword() {
@@ -498,6 +494,5 @@ function askForNewPassword(email) {
 }
 
 </script>
-<!-- CHANGES END-->
 </body>
 </html>
