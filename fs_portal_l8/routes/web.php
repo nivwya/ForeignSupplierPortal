@@ -17,11 +17,10 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\DashboardController;
-// CHANGES made by niveditha
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\VendorProfileController;
-//changes end
+
 
 
 // Redirect root to auth
@@ -48,7 +47,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard')->middleware('auth');
 
-//CHANGES made by niveditha
 // forgot password login page
 Route::post('/password/send-otp', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
 Route::post('/password/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp');
@@ -76,7 +74,6 @@ Route::middleware('auth')->group(function () {
         return response()->json(['success' => true]);
     })->name('vendor.change.password');
 });
-//changes end
 
 
 // Home content route
@@ -320,10 +317,8 @@ Route::middleware(['web', 'auth:web'])->group(function () {
         ->name('deliveries.tab');
         Route::post('/admin/assign-admin', [DashboardController::class, 'assignAdmin'])->name('admin.assignAdmin');
         Route::post('/admin/remove-admin', [DashboardController::class, 'removeAdmin'])->name('admin.removeAdmin');
-        //changes made by niveditha
         Route::get('/admin/profile', [DashboardController::class, 'profile'])->name('admin.profile');
         Route::post('/admin/profile/save/{admin}', [DashboardController::class, 'saveProfile'])->name('admin.profile.save');
         Route::post('/admin/change-password', [DashboardController::class, 'changePassword'])->name('admin.change.password');
-        //changes end
     });
 });
