@@ -7,7 +7,6 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <!-- changes made by niveditha -->
   <style>
     * {
       margin: 0; padding: 0; box-sizing: border-box;
@@ -332,9 +331,6 @@
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('collapsed');
 }
-
-//changes end
-
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
@@ -364,7 +360,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Attach deliveries-specific handlers here
                 attachDeliveriesSearchHandler();
             }
-            //changes made by niveditha
             if (tab === 'reports') {
               attachReportsTabsHandler();
               attachPoAckFilterHandler();
@@ -375,10 +370,8 @@ document.addEventListener('DOMContentLoaded', function() {
               attachReturnsFilterHandler();
 
             }
-            //changes end
             });
-    }
-//changes made by niveditha (add this for reports-content)
+    }t)
 function attachReportsTabsHandler() {
     const tabs = document.querySelectorAll(".report-tab");
     const sections = document.querySelectorAll(".report-section");
@@ -401,7 +394,6 @@ function attachReportsTabsHandler() {
     }
 }
 
-//report po-ack filter
 function attachPoAckFilterHandler() {
     const filterButton = document.querySelector('#report-po-ack #filterButton');
     if (!filterButton) return;
@@ -432,21 +424,16 @@ function attachPoAckFilterHandler() {
     });
 }
 
-
-// reports filter delivery
 function attachDeliveryFilterHandler() {
   const filterButton = document.querySelector('#report-delivery #filterDeliveryBtn');
   if (!filterButton) return;
-
   filterButton.addEventListener('click', () => {
     const status = document.querySelector('#report-delivery #delivery_status')?.value || '';
     const poNumber = document.querySelector('#report-delivery #delivery_po_number')?.value || '';
-
     const params = new URLSearchParams({
       delivery_status: status,
       po_number: poNumber,
     });
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -463,8 +450,6 @@ function attachDeliveryFilterHandler() {
     });
   });
 }
-
-//reports filter grn
 function attachGrnFilterHandler() {
   const filterButton = document.querySelector('#report-grn #filterGrnBtn');
   if (!filterButton) return;
@@ -477,7 +462,6 @@ function attachGrnFilterHandler() {
       grn_po_number: poNumber,
       grn_line_no: materialCode,
     });
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -495,20 +479,15 @@ function attachGrnFilterHandler() {
   });
 }
 
-
-//report filter invoice
 function attachInvoiceFilterHandler() {
   const filterBtn = document.querySelector('#report-invoice #filterInvoiceBtn');
   if (!filterBtn) return;
-
   filterBtn.addEventListener('click', () => {
     const status = document.querySelector('#report-invoice #invoice_status')?.value || '';
     const poNumber = document.querySelector('#report-invoice #invoice_po_number')?.value || '';
-
     const params = new URLSearchParams();
     if (status) params.append('invoice_status', status);
     if (poNumber) params.append('invoice_po_number', poNumber);
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -525,21 +504,16 @@ function attachInvoiceFilterHandler() {
     });
   });
 }
-
-//report payment filter
 function attachPaymentFilterHandler() {
   const filterBtn = document.querySelector('#report-payment-status #filterButtonPayment');
   if (!filterBtn) return;
-
   filterBtn.addEventListener('click', () => {
     const poNumber = document.querySelector('#report-payment-status #payment_po_number')?.value || '';
     const status = document.querySelector('#report-payment-status #payment_status')?.value || '';
-
     const params = new URLSearchParams({
       payment_po_number: poNumber,
       payment_status: status
     });
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -556,22 +530,16 @@ function attachPaymentFilterHandler() {
     });
   });
 }
-
-
-//reports filter backglog
 function attachBacklogFilterHandler() {
   const filterBtn = document.querySelector('#filterButtonBacklog');
   if (!filterBtn) return;
-
   filterBtn.addEventListener('click', () => {
     const poNumber = document.querySelector('#backlog_po_number')?.value || '';
     const lineItem = document.querySelector('#backlog_line_item')?.value || '';
-
     const params = new URLSearchParams({
       backlog_po_number: poNumber,
       backlog_line_item: lineItem
     });
-
     fetch(`/reports-content?${params.toString()}`, {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -589,7 +557,6 @@ function attachBacklogFilterHandler() {
   });
 }
 
-//report filter returns
 function attachReturnsFilterHandler() {
     const filterButton = document.querySelector('#filterButtonReturns');
     if (!filterButton) return;
@@ -619,9 +586,6 @@ function attachReturnsFilterHandler() {
     });
 }
 
-//changes end
-
-    // Event delegation for ALL dynamic delivery tab actions
     document.getElementById('tab-content').addEventListener('click', function(e) {
         // Expand/collapse PO line items
         const poLink = e.target.closest('.po-link');
@@ -649,7 +613,6 @@ function attachReturnsFilterHandler() {
             return;
         }
 
-        // Make Delivery
         if (e.target.classList.contains('make-delivery-btn')) {
             e.preventDefault();
             const poId = e.target.dataset.poId;
@@ -669,13 +632,10 @@ function attachReturnsFilterHandler() {
             return;
         }
 
-        // Vendor: Save supplied quantity and supply date
-
-        // Vendor: Add another (partial) delivery for a PO line item
          if (e.target.classList.contains('add-delivery-btn')) {
     e.preventDefault();
     const poItemId = e.target.dataset.poItemId;
-    const orderId = e.target.dataset.orderId; // <--- much more reliable
+    const orderId = e.target.dataset.orderId; 
 
     fetch(`/purchase-order-items/${poItemId}/add-delivery`, {
         method: 'POST',
@@ -708,7 +668,6 @@ function attachReturnsFilterHandler() {
 }
     });
 
-    // Orders tab handler (unchanged)
     function attachOrderTableHandler() {
         var ordersTable = document.getElementById('orders-table');
         if (!ordersTable) return;
