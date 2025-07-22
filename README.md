@@ -19,7 +19,7 @@ The system is integrated with **SAP** for real-time enterprise data syncing and 
 
 | Layer       | Technology             |
 |-------------|-------------------------|
-| Backend     | PHP 7.3 (Laravel 7)     |
+| Backend     | PHP 7.3 (Laravel 8.*)     |
 | Frontend    | Blade, JavaScript       |
 | Database    | MySQL                   |
 | SAP Integration | APIs + Database Views |
