@@ -62,9 +62,6 @@
             <th>Actions</th>
         </tr>
     </thead>
-
-    <!--changes made by niveditha-->
-
     <tbody>
         @foreach($orders as $order)
         <tr data-order-id="{{ $order->purchase_doc_no }}">
@@ -121,7 +118,6 @@
         </tr>
         @endforeach
     </tbody>
-    <!--changes end-->
 </table>
 @endif
 
