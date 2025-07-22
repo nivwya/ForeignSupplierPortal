@@ -1,3 +1,10 @@
+
+<a name="readme-top"></a>
+<br />
+<div align="center">
+  <img src="https://github.com/nivwya/ForeignSupplierPortal/blob/main/assets/almulla-logo-small.png" alt="Logo" height="70">
+</div>
+
 ## About The Project
 
 https://github.com//assets/
@@ -7,15 +14,7 @@ The system is integrated with **SAP** for real-time enterprise data syncing and 
 
 ---
 
-## the Inside Look
-
-| Login Page | Vendor Dashboard | PO Report | Invoice Report |
-|------------|------------------|-----------|----------------|
-| ![Login](public/screenshots/login.png) | ![Dashboard](public/screenshots/dashboard.png) | ![PO](public/screenshots/po_report.png) | ![Invoice](public/screenshots/invoice_report.png) |
-
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer       | Technology             |
 |-------------|-------------------------|
