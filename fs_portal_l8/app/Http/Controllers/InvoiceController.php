@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Invoice;
 use App\Models\PurchaseOrder;
 use App\Models\VendorContact;
@@ -10,15 +8,12 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Delivery;
 use App\Models\DeliveryItem;
 use Illuminate\Support\Facades\Auth;
-
 class InvoiceTabController extends Controller
 {
     public function upload(Request $request, $id)
 {
     $user = $request->user();
     $invoice = Invoice::findOrFail($id);
-
-    // Only vendor can upload for their own invoice
     if (!$user->hasRole('admin')) {
         $vendorContact = \App\Models\VendorContact::where('email', $user->email)
             ->where('vendor_id', $invoice->purchaseOrder->vendor_id)
@@ -27,17 +22,13 @@ class InvoiceTabController extends Controller
             return back()->with('error', 'Unauthorized');
         }
     }
-
     $validated = $request->validate([
         'invoice_pdf' => 'required|file|mimes:pdf|max:10240',
         'invoice_number' => 'required|string',
         'invoice_date' => 'required|date',
         'amount' => 'required|numeric|min:1',
     ]);
-
-    // Store the PDF
     $pdfPath = $request->file('invoice_pdf')->store('invoices');
-
     $invoice->update([
         'invoice_pdf' => $pdfPath,
         'invoice_number' => $validated['invoice_number'],
@@ -45,13 +36,8 @@ class InvoiceTabController extends Controller
         'amount' => $validated['amount'],
         'status' => 'submitted',
     ]);
-
     return back()->with('success', 'Invoice uploaded successfully.');
 }
-
-    /**
-     * Display invoices tab content
-     */
     public function invoicesTab(Request $request)
     {
         $user = Auth::user();
@@ -71,7 +57,6 @@ class InvoiceTabController extends Controller
                     'error' => 'No vendor associated with this email'
                 ]);
             }
-
             $invoices = Invoice::whereHas('purchaseOrder', function($query) use ($vendorContact) {
                 $query->where('vendor_id', $vendorContact->vendor_id);
             })->with([
@@ -79,70 +64,50 @@ class InvoiceTabController extends Controller
                 'delivery'
             ])->get();
         }
-
         return view('tabs.invoices', [
             'invoices' => $invoices,
             'user' => $user
         ]);
     }
-
-    /**
-     * Download Invoice PDF
-     */
     public function downloadInvoicePdf($id)
     {
         $user = Auth::user();
         $invoice = Invoice::with('purchaseOrder')->findOrFail($id);
-        
         if (!$user->hasRole('admin')) {
             $email = $user->email;
             $vendorContact = VendorContact::where('email', $email)
                 ->where('vendor_id', $invoice->purchaseOrder->vendor_id)
                 ->first();
-                
             if (!$vendorContact) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
         }
-        
         if (!$invoice->invoice_pdf || !\Storage::exists($invoice->invoice_pdf)) {
             return response()->json(['success' => false, 'message' => 'Invoice PDF not found'], 404);
         }
-        
         $filename = 'invoice_' . $invoice->invoice_number . '.pdf';
         return \Storage::download($invoice->invoice_pdf, $filename);
     }
-
     public function index(Request $request)
     {
         $user = $request->user();
-        
         if ($user->hasRole('admin')) {
-            // Admin sees all invoices
             $invoices = Invoice::with(['purchaseOrder', 'purchaseOrder.vendor'])->get();
         } else {
-            // Vendor sees only their invoices
             $email = $user->email;
             $vendorContact = VendorContact::where('email', $email)->first();
-            
             if (!$vendorContact) {
                 return response()->json(['success' => false, 'message' => 'No vendor associated with this email'], 404);
             }
-            
             $invoices = Invoice::whereHas('purchaseOrder', function($query) use ($vendorContact) {
                 $query->where('vendor_id', $vendorContact->vendor_id);
             })->with('purchaseOrder')->get();
         }
-        
         return response()->json([
             'success' => true,
             'data' => $invoices
         ]);
     }
-
-    /**
-     * Submit an invoice for a purchase order
-     */
     public function store(Request $request)
     {
         $user = $request->user();
@@ -156,33 +121,23 @@ class InvoiceTabController extends Controller
             'payment_terms' => 'required|string',
             'invoice_pdf' => 'required|file|',
         ]);
-        
         $purchaseOrder = PurchaseOrder::findOrFail($validated['order_id']);
-        
-        // Check if PO has GRN issued (required before invoice submission)
         if ($purchaseOrder->status !== 'grn_issued') {
             return response()->json([
                 'success' => false, 
                 'message' => 'Purchase order must have GRN issued before submitting invoice'
             ], 400);
         }
-        
         if (!$user->hasRole('admin')) {
-            // Check if user is associated with the vendor
             $email = $user->email;
             $vendorContact = VendorContact::where('email', $email)
                 ->where('vendor_id', $purchaseOrder->vendor_id)
                 ->first();
-                
             if (!$vendorContact) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
         }
-        
-        // Store invoice PDF
         $invoicePdfPath = $request->file('invoice_pdf')->store('invoices');
-        
-        // Create invoice
         $invoice = Invoice::create([
             'order_id' => $validated['order_id'],
             'invoice_number' => $validated['invoice_number'],
@@ -196,20 +151,13 @@ class InvoiceTabController extends Controller
             'payment_terms' => $validated['payment_terms'],
             'invoice_pdf' => $invoicePdfPath,
         ]);
-        
-        // Update PO status
         $purchaseOrder->update(['status' => 'invoice_submitted']);
-        
         return response()->json([
             'success' => true,
             'message' => 'Invoice submitted successfully',
             'data' => $invoice
         ], 201);
     }
-
-    /**
-     * Display the specified invoice
-     */
     public function show(Request $request, $id)
     {
         $user = $request->user();
@@ -226,16 +174,11 @@ class InvoiceTabController extends Controller
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
         }
-        
         return response()->json([
             'success' => true,
             'data' => $invoice
         ]);
     }
-
-    /**
-     * Download Invoice PDF
-     */
     public function downloadPdf(Request $request, $id)
     {
         $user = $request->user();
@@ -252,11 +195,9 @@ class InvoiceTabController extends Controller
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
         }
-        
         if (!$invoice->invoice_pdf) {
             return response()->json(['success' => false, 'message' => 'Invoice PDF not found'], 404);
         }
-        
         return Storage::download($invoice->invoice_pdf);
     }
 }
