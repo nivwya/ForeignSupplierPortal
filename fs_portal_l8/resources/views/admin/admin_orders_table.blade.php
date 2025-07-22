@@ -1,0 +1,127 @@
+{{-- resources/views/admin/admin_orders_table.blade.php --}}
+<style>
+.attach-pdf-row-btn, .remove-pdf-row-btn, .issue-po-row-btn {
+    border: none;
+    color: #fff;
+    padding: 6px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 6px;
+    margin: 2px 2px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+    outline: none;
+}
+
+.attach-pdf-row-btn {
+    background: linear-gradient(90deg, #318c38 0%, #318c38 100%);
+}
+.attach-pdf-row-btn:hover {
+    background: linear-gradient(90deg, #2e7d32 0%, #43e97b 100%);
+}
+
+.remove-pdf-row-btn {
+    background: linear-gradient(90deg, #f85032 0%, #e73827 100%);
+}
+.remove-pdf-row-btn:hover {
+    background: linear-gradient(90deg, #c0392b 0%, #e74c3c 100%);
+}
+
+.issue-po-row-btn {
+    background: linear-gradient(90deg, #36d1c4 0%, #5b86e5 100%);
+}
+.issue-po-row-btn:hover {
+    background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
+}
+</style>
+
+@if($orders->count() === 0)
+    <p style="text-align:center;color:#888;">No purchase orders found.</p>
+@else
+<button id="release-all-btn"
+    style="background: linear-gradient(90deg,#36d1c4 0%,#5b86e5 100%);
+           color: #fff; padding: 0.7rem 2.2rem; border:none; border-radius:8px;
+           font-weight:600; margin-bottom:1.3rem; font-size:1rem; cursor:pointer; display:none;">
+    &#9889; Release All With PDF (Filtered)
+</button>
+
+<table id="orders-table">
+    <thead>
+        <tr>
+            <th>Order Number</th>
+            <th>Order Date</th>
+            <th>Due Delivery Date</th>
+            <th>Company Code</th>
+            <th>Company Name</th>
+            <th>Order Value</th>
+            <th>Currency</th>
+            <th>Payment Term</th>
+            <th>Status</th>
+            <th>PDF</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <!--changes made by niveditha-->
+
+    <tbody>
+        @foreach($orders as $order)
+        <tr data-order-id="{{ $order->purchase_doc_no }}">
+            <td>
+                <a href="#" class="order-link">{{ $order->purchase_doc_no }}</a>
+            </td>
+            <td>{{ $order->purchase_order_dt }}</td>
+            <td>{{ $order->delivery_date }}</td>
+            <td>{{ $order->company_code }}</td>
+            <td>{{ $order->company_name }}</td>
+            <td>{{ $order->net_price }}</td>
+            <td>{{ $order->currency_key }}</td>
+            <td>{{ $order->payment_key }}</td>
+            <td>
+                @if(strtolower($order->ack_status) === 'delivered')
+                    <span class="status-delivered">Delivered</span>
+                @elseif(strtolower($order->ack_status) === 'issued')
+                    <span class="status-issued">Issued</span>
+                @elseif(strtolower($order->ack_status) === 'acknowledged')
+                    <span class="status-notdelivered">Not Delivered</span>
+                @elseif(strtolower($order->ack_status) === 'partial delivery')
+                    <span class="status-partial">Partial</span>
+                @else
+                    <span>{{ $order->ack_status }}</span>
+                @endif
+            </td>
+            <td>
+                @if($order->po_pdf)
+                    <a href="{{ Storage::url($order->po_pdf) }}" target="_blank">
+                        <i class="fa fa-file-pdf-o" style="font-size:15px;color:red;margin-right:4px"></i>{{ $order->purchase_doc_no }}
+                    </a>
+                @else
+                    <span style="color:gray;">No PDF</span>
+                @endif
+            </td>
+
+            <td>
+                <form class="attach-pdf-row-form" data-poid="{{ $order->purchase_doc_no }}" enctype="multipart/form-data" style="display:inline;">
+                    <input type="file" name="po_file" accept="application/pdf" style="display:none;">
+                    <button type="button" class="attach-pdf-row-btn" data-poid="{{ $order->purchase_doc_no }}">Attach/Verify PDF</button>
+                </form>
+                 @if(strtolower($order->ack_status) === 'not verified')
+                     <button class="remove-pdf-row-btn" data-poid="{{ $order->purchase_doc_no }}">Remove PDF</button>
+                @elseif(strtolower($order->ack_status) === 'issued')
+                     <button class="remove-pdf-row-btn" data-poid="{{ $order->purchase_doc_no }}">Remove PDF</button>
+                @endif
+                @if(strtolower($order->ack_status) === 'not verified')
+                    <button class="issue-po-row-btn" data-poid="{{ $order->purchase_doc_no }}">Release</button>
+                @elseif(strtolower($order->ack_status) === 'issued')
+                    <button class="issue-po-row-btn" data-poid="{{ $order->purchase_doc_no }}">Release</button>
+                @endif
+            </td>
+
+        </tr>
+        @endforeach
+    </tbody>
+    <!--changes end-->
+</table>
+@endif
+
