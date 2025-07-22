@@ -23,8 +23,6 @@
             <tbody>
                 @foreach($items as $item)
                 <tr> 
-                    <!--changes made by niveditha-->
-                    
                     <td>{{ $item->purchase_doc_no }}</td>
                     <td>{{ $item->item_number_doc }}</td>
                     <td>{{ $item->desc_purchase_org }}</td>
@@ -33,9 +31,6 @@
                     <td>{{ number_format($item->net_price ?? 0, 2) }}</td>
                     <td>{{ number_format(($item->net_price ?? 0) * ($item->purchase_order_qty ?? 0), 2) }}</td>
                     <td>{{ $item->plant }}</td>
-                    <td>{{ $item->storage_loc }}</td>
-
-                    <!--changes end-->
                 </tr>
                 @endforeach
             </tbody>
